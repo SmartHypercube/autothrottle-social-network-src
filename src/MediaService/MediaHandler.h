@@ -108,9 +108,6 @@ void MediaHandler::UploadMedia(
   //     std::cout << img << ";" << std::endl;
   // }
 
-  // spawn a new thread so that we don't wait on time-consuming image filtering
-  std::thread([=] 
-  {
     // media-filter-service
     std::vector<bool> media_filter;
     // bool _filter_flag = (std::rand() % 10 <= 5);
@@ -211,7 +208,6 @@ void MediaHandler::UploadMedia(
       throw;
     }
     _compose_client_pool->Push(compose_post_client_wrapper);
-  }).detach();
 
   span->Finish();
 

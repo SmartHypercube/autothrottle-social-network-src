@@ -1,4 +1,3 @@
-import sys
 import requests
 import random
 import base64
@@ -121,8 +120,7 @@ charset = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's',
   '6', '7', '8', '9', '0']
 
 #----------------- media data -----------------#
-benchmark_dir = "/home/yz2297/Software/deathstar_suite/socialNetwork-ml-swarm/DeathStarBench/socialNetwork-ml-swarm"
-media_dir = benchmark_dir + "/wrk2/scripts/social-network/images/"
+media_dir = 'social-network/src/wrk2/scripts/social-network/images/'
 media_jpg = {}
 media_jpg_num = 17
 media_png  = {}
@@ -157,12 +155,10 @@ def random_text():
 
   i = 0
   coin = round(random.uniform(0, 100.0), 1)
-  print('random_text coin = %.1f' %coin)
   for l in tweet_size_range:
     if coin <= tweet_size_prob[l]:
       break
     i += 1
-  # print('random_text i = %d' %i)
 
   length = 0
   if i == 0:
@@ -173,40 +169,30 @@ def random_text():
     length = random.randint(tweet_size_range[i - 1], tweet_size_range[i])
   assert length > 0
 
-  print('random_text length = %d' %length)
-
   return ''.join(charset[random.randint(0, len(charset) - 1)] for x in range(0, length))
 
 def random_tweet_user_id():
   global cum_tweet_num_prob_by_follower_num
   global user_id_by_follower_num
 
-  i = 0
   coin = round(random.uniform(0, 100.0), 1)
-  print('random_tweet_user_id coin = %.1f' %coin)
   chosen_key = -1
   for k in sorted(list(tweet_num_prob_by_follower_num.keys())):
     chosen_key = k
     if coin <= cum_tweet_num_prob_by_follower_num[k]:
       break
 
-  print('random_tweet_user_id key = %d' %chosen_key)
-
   assert chosen_key > 0
   return str(random.choice(user_id_by_follower_num[chosen_key]))
 
 def upload_follow(session, addr, user_0, user_1):
   payload = {'user_name': 'username_' + user_0, 'followee_name': 'username_' + user_1}
-  r = session.post(addr + "/wrk2-api/user/follow", data=payload)
-  print(r.status_code)
-  # print(r.text)
+  session.post(addr + "/wrk2-api/user/follow", data=payload)
 
 def upload_register(session, addr, user):
   payload = {'first_name': 'first_name_' + user, 'last_name': 'last_name_' + user,
              'username': 'username_' + user, 'password': 'password_' + user, 'user_id': user}
-  r = session.post(addr + "/wrk2-api/user/register", data=payload)
-  print(r.status_code)
-  # print(r.text)
+  session.post(addr + "/wrk2-api/user/register", data=payload)
 
 # compose a post for each user in the graph
 def compose_post_for_each(session, addr):
@@ -239,7 +225,6 @@ def compose_post_for_each(session, addr):
     num_media = 0
     if random.random() < 0.05:
       num_media = random.randint(1,3)
-      print("num_media: " + str(num_media))
 
     medium = '['
     media_types = '['
@@ -259,14 +244,6 @@ def compose_post_for_each(session, addr):
     medium = medium[:-1] + ']'
     media_types = media_types[:-1] + ']'
 
-    print("New message text: ")
-    print(user)
-    print(text)
-    # print(medium)
-    print(','.join(media_ids))
-    print(media_types)
-    print('\n')
-
     payload = None
 
     if num_media != 0:
@@ -279,11 +256,7 @@ def compose_post_for_each(session, addr):
 
     assert payload != None
 
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-
-    r = session.post(addr + "/wrk2-api/post/compose", data=payload)
-    print(r.status_code)
-    print(r.text)
+    session.post(addr + "/wrk2-api/post/compose", data=payload)
 
 def compose_post(session, addr):
   global media_jpg
@@ -333,14 +306,6 @@ def compose_post(session, addr):
   medium = medium[:-1] + ']'
   media_types = media_types[:-1] + ']'
 
-  print("New message text: ")
-  print(user)
-  print(text)
-  # print(medium)
-  print(','.join(media_ids))
-  print(media_types)
-  print('\n')
-
   payload = None
 
   if num_media != 0:
@@ -353,9 +318,7 @@ def compose_post(session, addr):
 
   assert payload != None
 
-  r = session.post(addr + "/wrk2-api/post/compose", data=payload)
-  print(r.status_code)
-  print(r.text)
+  session.post(addr + "/wrk2-api/post/compose", data=payload)
 
 def getNodes(file):
   line = file.readline()
@@ -376,7 +339,7 @@ def register(addr, nodes):
     upload_register(session, addr, str(i))
     idx += 1
     if idx % 200 == 0:
-      print("Registered", idx, "users successfully")
+      print("Registered", idx, "users successfully", end='\r')
   print("Registered", idx, "users successfully")
 
 def follow(addr, edges):
@@ -387,7 +350,7 @@ def follow(addr, edges):
     upload_follow(session, addr, edge[1], edge[0])
     idx += 1
     if idx % 200 == 0:
-      print(idx, "edges finished")
+      print(idx, "edges finished", end='\r')
   print(idx, "edges finished")
 
 def compose_for_each(addr):
@@ -403,22 +366,15 @@ def compose(addr, num_posts):
     compose_post(session, addr)
     idx += 1
     if idx % 100 == 0:
-      print(idx, "posts finished")
+      print(idx, "posts finished", end='\r')
   print(idx, "compose posts finished")
 
 if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    filename = "datasets/social-graph/socfb-Reed98/socfb-Reed98.mtx"
-  else:
-    filename = sys.argv[1]
-  with open(filename, 'r') as file:
+  with open('social-network/src/datasets/social-graph/socfb-Reed98/socfb-Reed98.mtx', 'r') as file:
     nodes = getNodes(file)
     edges = getEdges(file)
 
-  # nginx is on ath-3
-  addr = "http://0.0.0.0:8080"
-  # addr = "http://ath-9-ip:8080" # ath-9
-  # addr = "http://ath-8-ip:8080" # ath-8
+  addr = "http://127.0.0.1:30001"
 
   register(addr, nodes)
   follow(addr, edges)

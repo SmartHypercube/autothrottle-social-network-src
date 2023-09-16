@@ -145,7 +145,7 @@ TClient * ClientPool<TClient>::ProduceClient() {
     try {
       client = new TClient(_addr, _port, _keep_alive);
       _curr_pool_size++;
-      LOG(warning) << "ClientPool size " << _curr_pool_size << " " << client_type;
+      LOG(warning) << "ClientPool size " << _curr_pool_size << " " << _client_type;
       lock.unlock();
       return client;
     } catch (...) {
