@@ -1,5 +1,5 @@
-# Social Network Microservices (for Autothrottle)
-This is a fork of the [Social Network Microservices](https://github.com/zyqCSL/sinan-local/tree/382e76d5370496276f186c7e0bc8938c5f692fe3/benchmarks/socialNetwork-ml-swarm) published by [Sinan](https://github.com/zyqCSL/sinan-local). We made some modifications for Autothrottle. The Sinan's version is in turn forked from [DeathStarBench](https://github.com/delimitrou/DeathStarBench), with 2 additional ML services added. Below is the original README from Sinan.
+# Social Network Microservices (for [Autothrottle](https://github.com/microsoft/autothrottle))
+This is a fork of the [Social Network Microservices](https://github.com/zyqCSL/sinan-local/tree/382e76d5370496276f186c7e0bc8938c5f692fe3/benchmarks/socialNetwork-ml-swarm) published by [Sinan](https://github.com/zyqCSL/sinan-local). We made some modifications for [Autothrottle](https://github.com/microsoft/autothrottle). The Sinan's version is in turn forked from [DeathStarBench](https://github.com/delimitrou/DeathStarBench), with 2 additional ML services added. Below is the original README from Sinan.
 
 A social network with unidirectional follow relationships, implemented with loosely-coupled microservices, communicating with each other via Thrift RPCs. 
 
